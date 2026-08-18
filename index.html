@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jurnal Kelas – SMPN 177</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f1f5f9; min-height: 100vh; padding: 16px; }
+    .container { max-width: 1300px; margin: 0 auto; background: #fff; border-radius: 28px; padding: 24px; box-shadow: 0 12px 48px rgba(0,0,0,0.06); }
+    h1 { font-size: 24px; font-weight: 700; color: #0b2b4a; }
+    .sub { color: #475569; font-size: 14px; margin-bottom: 20px; }
+    .flex { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .flex-between { display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; }
+    .btn { background: #e2e8f0; border: none; padding: 8px 18px; border-radius: 40px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.2s; color: #1e293b; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-sm { padding: 4px 12px; font-size: 12px; }
+    .hidden { display: none !important; }
+    .card { background: #f8fafc; border-radius: 16px; padding: 16px; margin-bottom: 12px; border-left: 5px solid #2563eb; }
+    .alert { padding: 12px 16px; border-radius: 12px; margin: 8px 0; font-weight: 500; }
+    .alert-error { background: #fee2e2; color: #991b1b; }
+    .alert-success { background: #dcfce7; color: #166534; }
+    .alert-warning { background: #fef3c7; color: #92400e; }
+    input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #fff; }
+    .login-box { max-width: 380px; margin: 40px auto; }
+    .login-box input { margin-bottom: 14px; }
+    .role-selector { display: flex; gap: 12px; margin-bottom: 20px; }
+    .role-btn { flex:1; text-align:center; padding:10px; border-radius:40px; border:2px solid #e2e8f0; font-weight:600; cursor:pointer; }
+    .role-btn.active { border-color: #2563eb; background: #eff6ff; color: #1e40af; }
+    .matrix-wrap { overflow-x: auto; margin-top: 12px; }
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 700px; }
+    .matrix-table th { background: #f1f5f9; padding: 8px; border: 1px solid #e2e8f0; text-align: center; }
+    .matrix-table td { border: 1px solid #e2e8f0; padding: 6px; text-align: center; font-size: 11px; }
+    .cell-hadir { background: #bbf7d0; color: #166534; }
+    .cell-tidak { background: #fecaca; color: #991b1b; }
+    .cell-izin { background: #fde68a; color: #92400e; }
+    .cell-kosong { background: #ffffff; }
+    .slot { background: #f1f5f9; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; border: 1px solid transparent; }
+    .slot:hover { border-color: #2563eb; }
+    .slot .jam { background: #2563eb; color: #fff; padding: 2px 12px; border-radius: 30px; font-weight: 700; font-size: 13px; }
+    .slot .mapel { font-weight: 700; color: #0b2b4a; flex:1; }
+    .slot .guru { font-size: 13px; color: #475569; }
+    .slot.done { border-left: 4px solid #22c55e; }
+    .slot.locked { opacity: 0.5; pointer-events: none; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+    .modal-box { background: #fff; max-width: 480px; width: 100%; border-radius: 24px; padding: 24px; }
+    .modal-box .status-options { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+    .modal-box .status-options button { flex:1; padding:6px; border-radius:30px; border:2px solid #e2e8f0; background:#fff; font-weight:600; cursor:pointer; }
+    .modal-box .status-options button.active { border-color: #2563eb; background: #eff6ff; }
+    .modal-box .actions { display: flex; gap: 10px; margin-top: 16px; }
+    .modal-box .actions button { flex:1; }
+    .grafik-wrap { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grafik-wrap .chart-box { background: #f8fafc; border-radius: 16px; padding: 16px; }
+    @media (max-width: 640px) { .grafik-wrap { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="container" id="app">
+  <!-- LOGIN -->
+  <div id="loginView">
+    <div style="text-align:center; margin-bottom: 8px;">
+      <h1>📋 Jurnal Kelas</h1><p class="sub">SMP Negeri 177 Jakarta</p>
+    </div>
+    <div id="loginAlert" class="hidden"></div>
+    <div class="login-box">
+      <div class="role-selector">
+        <div class="role-btn active" data-role="ketua" onclick="pilihRole('ketua')">👨‍🎓 Ketua Kelas</div>
+        <div class="role-btn" data-role="admin" onclick="pilihRole('admin')">🛡️ Admin</div>
+      </div>
+      <div id="loginFields">
+        <input type="text" id="loginUsername" placeholder="Username (contoh: 7a)" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+        <button class="btn btn-primary" style="width:100%; padding:12px;" onclick="handleLogin()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD KETUA -->
+  <div id="ketuaView" class="hidden">
+    <div class="flex-between">
+      <div><h1>📅 Jadwal Kelas <span id="ketuaKelasLabel"></span></h1></div>
+      <button class="btn btn-sm" onclick="logout()">Logout</button>
+    </div>
+    <div class="flex" style="margin: 12px 0;">
+      <button class="btn btn-sm" data-hari="Senin" onclick="pilihHariKetua('Senin')">Senin</button>
+      <button class="btn btn-sm" data-hari="Selasa" onclick="pilihHariKetua('Selasa')">Selasa</button>
+      <button class="btn btn-sm" data-hari="Rabu" onclick="pilihHariKetua('Rabu')">Rabu</button>
+      <button class="btn btn-sm" data-hari="Kamis" onclick="pilihHariKetua('Kamis')">Kamis</button>
+      <button class="btn btn-sm" data-hari="Jumat" onclick="pilihHariKetua('Jumat')">Jumat</button>
+      <span style="margin-left:auto; font-size:14px; color:#475569;" id="ketuaTanggalDisplay"></span>
+    </div>
+    <div id="ketuaLockNotif" class="hidden alert alert-warning"></div>
+    <div id="ketuaJadwalList"></div>
+    <div id="ketuaSubmitStatus" class="hidden"></div>
+    <button class="btn btn-primary" style="width:100%; padding:14px; margin-top:12px;" onclick="kirimSemuaKetua()">📤 Kirim Laporan Hari Ini</button>
+  </div>
+
+  <!-- DASHBOARD ADMIN -->
+  <div id="adminView" class="hidden">
+    <div class="flex-between">
+      <div><h1>📊 Monitoring Guru</h1></div>
+      <div>
+        <button class="btn btn-sm" onclick="refreshAdmin()">🔄 Refresh</button>
+        <button class="btn btn-sm" onclick="logout()">Logout</button>
+      </div>
+    </div>
+    <div class="flex" style="margin: 12px 0;">
+      <select id="adminFilterAngkatan" onchange="applyFilterAdmin()">
+        <option value="">Semua Kelas</option><option value="7">Kelas 7</option><option value="8">Kelas 8</option><option value="9">Kelas 9</option>
+      </select>
+      <input type="date" id="adminFilterTanggal" onchange="applyFilterAdmin()" />
+      <button class="btn btn-sm" onclick="applyFilterAdmin()">Filter</button>
+    </div>
+    <div id="adminLockNotif" class="hidden alert alert-warning"></div>
+    <div class="matrix-wrap"><table class="matrix-table"><thead id="adminMatrixHead"></thead><tbody id="adminMatrixBody"></tbody></table></div>
+    <div id="adminStats" class="flex" style="margin:12px 0; gap:16px;"></div>
+    <div class="grafik-wrap">
+      <div class="chart-box"><canvas id="chartHarian"></canvas></div>
+      <div class="chart-box"><canvas id="chartBulanan"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal hidden" onclick="if(event.target===this) closeModal()">
+  <div class="modal-box">
+    <h3 id="modalTitle">Detail Jadwal</h3>
+    <div id="modalBody"></div>
+    <div class="actions">
+      <button class="btn" onclick="closeModal()">Tutup</button>
+      <button class="btn btn-primary" onclick="simpanModal()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =======================================================
+// GANTI TULISAN DI BAWAH INI SAMA URL WEB APP GOOGLE LU!
+// =======================================================
+const API_URL = 'https://script.google.com/macros/s/AKfycbz2PPlOenLDm7LM-vNfyvgXtQFWTYxDfD1juk8ONJjRYp571wNxJ_LWhCyvQjUiDWk/exec';
+const ADMIN_PASSWORD = 'admin'; 
+
+let currentUser = null, currentHari = 'Senin', currentTanggal = new Date().toISOString().split('T')[0];
+let jadwalData = [], laporanData = [], lockedDays = [], statusMap = {}, modalTarget = null;
+let chartHarian = null, chartBulanan = null;
+
+// FUNGSI FETCH PALING AMPUH ANTI CORS
+function callApi(action, data) {
+  return fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: action, data: data })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+    return res.json();
+  })
+  .then(json => { console.log(json); return json; })
+  .catch(err => { console.error(err); return { success: false, message: 'Gagal terhubung ke Google Script!' }; });
+}
+
+// LOGIN
+let selectedRole = 'ketua';
+function pilihRole(role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(el => el.classList.toggle('active', el.dataset.role === role));
+  document.getElementById('loginUsername').placeholder = role === 'ketua' ? 'Username (contoh: 7a)' : 'Username Admin';
+  if (role === 'admin') { document.getElementById('loginUsername').value = 'admin'; document.getElementById('loginPassword').placeholder = 'Password Admin'; } 
+  else { document.getElementById('loginUsername').value = ''; document.getElementById('loginPassword').placeholder = 'Password'; }
+}
+
+async function handleLogin() {
+  const user = document.getElementById('loginUsername').value.trim();
+  const pass = document.getElementById('loginPassword').value.trim();
+  if (!user || !pass) { showAlert('Isi semua kolom!', 'error'); return; }
+
+  if (selectedRole === 'admin') {
+    if (pass === ADMIN_PASSWORD) {
+      currentUser = { role: 'admin', username: 'admin' };
+      document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('adminView').classList.remove('hidden');
+      document.getElementById('adminFilterTanggal').value = currentTanggal;
+      loadLockedDays(); applyFilterAdmin(); return;
+    } else { showAlert('Password admin salah!', 'error'); return; }
+  }
+
+  showAlert('Memeriksa akun...', 'warning');
+  const res = await callApi('loginKetua', { username: user, password: pass });
+  if (res.success) {
+    currentUser = { role: 'ketua', username: user, kelas: res.kelas };
+    document.getElementById('loginView').classList.add('hidden');
+    document.getElementById('ketuaView').classList.remove('hidden');
+    document.getElementById('ketuaKelasLabel').textContent = res.kelas;
+    loadLockedDays(); pilihHariKetua('Senin');
+  } else { showAlert(res.message, 'error'); }
+}
+
+function showAlert(msg, type) {
+  const el = document.getElementById('loginAlert');
+  el.className = 'alert ' + (type==='error'?'alert-error':'alert-warning');
+  el.textContent = msg;
+}
+function logout() { location.reload(); }
+
+// LOCKED DAYS
+async function loadLockedDays() {
+  const res = await callApi('getLockedDays', {});
+  if (res.success) lockedDays = res.data || [];
+}
+function isHariLocked(tgl) { return lockedDays.some(d => String(d.tanggal) === String(tgl)); }
+
+// KETUA KELAS
+function pilihHariKetua(hari) {
+  currentHari = hari;
+  document.querySelectorAll('#ketuaView .flex .btn').forEach(el => {
+    el.style.background = el.dataset.hari === hari ? '#2563eb' : '#e2e8f0';
+    el.style.color = el.dataset.hari === hari ? '#fff' : '#1e293b';
+  });
+  const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dayMap = { 'Senin':1,'Selasa':2,'Rabu':3,'Kamis':4,'Jumat':5 };
+  let target = new Date(today); target.setDate(today.getDate() + (dayMap[hari] - today.getDay() + 7) % 7);
+  currentTanggal = target.toISOString().split('T')[0];
+  document.getElementById('ketuaTanggalDisplay').textContent = currentTanggal + ' (' + hari + ')';
+  loadJadwalKetua();
+}
+
+async function loadJadwalKetua() {
+  document.getElementById('ketuaJadwalList').innerHTML = '<div style="text-align:center;">Memuat jadwal...</div>';
+  const res = await callApi('getJadwalKelas', { kelas: currentUser.kelas, tanggal: currentTanggal });
+  if (res.success) {
+    jadwalData = res.data || [];
+    const locked = res.locked || isHariLocked(currentTanggal);
+    const notif = document.getElementById('ketuaLockNotif');
+    if (locked) { notif.classList.remove('hidden'); notif.textContent = '🔒 Hari ini ada kegiatan, tidak perlu isi jurnal.'; } 
+    else { notif.classList.add('hidden'); }
+    renderJadwalKetua(locked);
+  } else { document.getElementById('ketuaJadwalList').innerHTML = `<div class="alert alert-error">Gagal: ${res.message}</div>`; }
+}
+
+function renderJadwalKetua(locked) {
+  const container = document.getElementById('ketuaJadwalList');
+  if (jadwalData.length === 0) { container.innerHTML = '<div class="card" style="text-align:center;">Tidak ada jadwal.</div>'; return; }
+  let html = '';
+  jadwalData.forEach((item, idx) => {
+    const s = statusMap[idx] || { status: 'Belum' };
+    html += `
+      <div class="slot ${s.status !== 'Belum' ? 'done' : ''} ${locked ? 'locked' : ''}" onclick="${!locked ? `bukaModal(${idx})` : ''}">
+        <span class="jam">${item.jam}</span>
+        <span class="mapel">${item.mapel}</span><span class="guru">${item.guru}</span>
+        <span style="font-size:12px; font-weight:600;">${s.status !== 'Belum' ? s.status : '⬜ Belum'}</span>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function bukaModal(idx) {
+  const item = jadwalData[idx], cur = statusMap[idx] || { status: 'Belum', ket: '' };
+  modalTarget = { idx, jam: item.jam, mapel: item.mapel, guru: item.guru };
+  document.getElementById('modalTitle').textContent = `Jam ${item.jam} – ${item.mapel}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div style="margin-bottom:10px;"><strong>Guru:</strong> ${item.guru}</div>
+    <div class="status-options">
+      ${['Hadir','Tidak Hadir','Izin'].map(s => `<button class="${cur.status===s?'active':''}" onclick="pilihStatus('${s}')">${s}</button>`).join('')}
+    </div>
+    <label style="font-weight:600;font-size:12px;">Keterangan Tugas (jika kosong):</label>
+    <textarea id="modalKet" rows="2">${cur.ket || ''}</textarea>
+  `;
+  document.getElementById('modal').classList.remove('hidden');
+}
+function pilihStatus(s) { document.querySelectorAll('.status-options button').forEach(el => el.classList.toggle('active', el.textContent === s)); }
+function closeModal() { document.getElementById('modal').classList.add('hidden'); modalTarget = null; }
+function simpanModal() {
+  const btn = document.querySelector('.status-options button.active');
+  if (!btn) { alert('Pilih status!'); return; }
+  statusMap[modalTarget.idx] = { status: btn.textContent, ket: document.getElementById('modalKet').value };
+  closeModal(); renderJadwalKetua(false);
+}
+
+async function kirimSemuaKetua() {
+  let laporan = [];
+  jadwalData.forEach((item, idx) => {
+    const s = statusMap[idx] || { status: 'Belum' };
+    if (s.status !== 'Belum') {
+      laporan.push({ tanggal: currentTanggal, kelas: currentUser.kelas, jamKe: item.jam, mapel: item.mapel, guru: item.guru, kehadiran: s.status, keteranganTugas: s.ket||'', namaPelapor: currentUser.username });
+    }
+  });
+  if (laporan.length === 0) { alert('Isi minimal 1 laporan!'); return; }
+  document.getElementById('ketuaSubmitStatus').className = 'alert alert-warning';
+  document.getElementById('ketuaSubmitStatus').textContent = 'Mengirim...';
+  
+  let ok=0;
+  for (let i=0; i<laporan.length; i++) {
+    const res = await callApi('submitJurnal', laporan[i]);
+    if (res.success) ok++;
+  }
+  document.getElementById('ketuaSubmitStatus').className = 'alert alert-success';
+  document.getElementById('ketuaSubmitStatus').textContent = `✅ ${ok} jadwal berhasil dilaporkan!`;
+  statusMap = {}; renderJadwalKetua(false);
+}
+
+// ADMIN DASHBOARD
+async function applyFilterAdmin() {
+  adminFilter.angkatan = document.getElementById('adminFilterAngkatan').value;
+  adminFilter.tanggal = document.getElementById('adminFilterTanggal').value || currentTanggal;
+  const res = await callApi('getLaporan', { filterTanggal: adminFilter.tanggal });
+  if (res.success) { laporanData = res.data || []; renderAdminMatrix(); renderAdminStats(); renderCharts(); }
+}
+function renderAdminMatrix() {
+  const mapLaporan = {};
+  laporanData.forEach(r => mapLaporan[r.kelas + '-' + r.jamKe] = r);
+  let allKelas = [];
+  for(let i=7; i<=9; i++) { for(let j=65; j<=73; j++) { allKelas.push(i + String.fromCharCode(j)); } }
+  let filtered = adminFilter.angkatan ? allKelas.filter(k => k.startsWith(adminFilter.angkatan)) : allKelas;
+  
+  let thead = '<tr><th>Kelas</th>', tbody = '';
+  [1,2,3,4,5,6,7,8,9].forEach(j => thead += `<th>Jam ${j}</th>`); thead += '</tr>';
+  filtered.forEach(k => {
+    tbody += `<tr><td><strong>${k}</strong></td>`;
+    [1,2,3,4,5,6,7,8,9].forEach(j => {
+      const row = mapLaporan[k.replace(' ', '') + '-' + j] || mapLaporan[k + '-' + j];
+      let color = 'cell-kosong', icon = '⬜';
+      if(row) {
+        if(row.kehadiran === 'Hadir') { color='cell-hadir'; icon='✔'; }
+        else if(row.kehadiran === 'Tidak Hadir') { color='cell-tidak'; icon='❌'; }
+        else { color='cell-izin'; icon='📝'; }
+      }
+      tbody += `<td class="${color}">${icon}</td>`;
+    });
+    tbody += '</tr>';
+  });
+  document.getElementById('adminMatrixHead').innerHTML = thead;
+  document.getElementById('adminMatrixBody').innerHTML = tbody;
+}
+function renderAdminStats() {
+  const h = laporanData.filter(r=>r.kehadiran==='Hadir').length, t = laporanData.filter(r=>r.kehadiran==='Tidak Hadir').length, i = laporanData.filter(r=>r.kehadiran==='Izin').length;
+  document.getElementById('adminStats').innerHTML = `<span>Hadir: ${h}</span> | <span>Tidak: ${t}</span> | <span>Izin: ${i}</span>`;
+}
+function renderCharts() {
+  if (chartHarian) chartHarian.destroy();
+  const ctx = document.getElementById('chartHarian').getContext('2d');
+  chartHarian = new Chart(ctx, { type:'pie', data:{ labels:['Hadir','Tidak','Izin'], datasets:[{ data:[laporanData.filter(r=>r.kehadiran==='Hadir').length, laporanData.filter(r=>r.kehadiran==='Tidak Hadir').length, laporanData.filter(r=>r.kehadiran==='Izin').length], backgroundColor:['#22c55e','#ef4444','#f59e0b'] }] } });
+}
+function refreshAdmin() { applyFilterAdmin(); }
+</script>
+</body>
+</html>
