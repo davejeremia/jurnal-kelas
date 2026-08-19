@@ -3,190 +3,241 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jurnal Kelas – SMP Negeri 177 Jakarta</title>
+  <title>Jurnal Kelas – SMPN 177 Jakarta</title>
+  
+  <!-- Font Modern (SaaS/Campus Style) -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- FullCalendar CSS & JS -->
   <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/id.js'></script>
+
+  <!-- Chart.js untuk Grafik Admin -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: #f1f5f9; color: #0f172a; min-height: 100vh; }
     
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; min-height: 100vh; color: #1e293b; padding-bottom: 40px; }
+    /* Navigasi Atas Premium */
+    .navbar { background: #ffffff; padding: 12px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+    .nav-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; color: #1e3a8a; }
+    .nav-brand img { height: 40px; width: auto; object-fit: contain; }
     
-    /* Login Header Khusus Halaman Depan */
-    .login-header { background: #fff; padding: 40px 20px; text-align: center; border-bottom: 1px solid #e2e8f0; margin-bottom: 40px; }
-    .login-header img { max-height: 70px; margin-bottom: 20px; object-fit: contain; }
-    .login-header h1 { font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-    .login-header p { font-size: 14px; color: #64748b; }
-
-    .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
     
-    /* Box Konten Utama (Minimalis & Elegan) */
-    .main-card { background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #f1f5f9; }
-    
-    /* Tombol & Form */
-    .btn { background: #f1f5f9; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; color: #334155; }
+    /* Tombol-Tombol */
+    .btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.2s; color: #334155; }
     .btn:hover { background: #e2e8f0; }
-    .btn-primary { background: #2563eb; color: #fff; }
-    .btn-primary:hover { background: #1d4ed8; box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
-    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-primary { background: #1e40af; color: #fff; border: none; box-shadow: 0 4px 6px -1px rgba(30,64,175,0.2); }
+    .btn-primary:hover { background: #1e3a8a; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; border: none; }
     .btn-danger:hover { background: #fecaca; }
     .hidden { display: none !important; }
 
-    /* Login Form */
-    .login-wrapper { max-width: 400px; margin: 0 auto; background: #fff; padding: 32px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9; }
-    .login-wrapper input { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; margin-bottom: 16px; transition: border-color 0.2s; }
-    .login-wrapper input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-    .role-selector { display: flex; gap: 8px; margin-bottom: 24px; background: #f8fafc; padding: 4px; border-radius: 10px; }
-    .role-btn { flex: 1; text-align: center; padding: 8px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; color: #64748b; transition: all 0.2s; }
-    .role-btn.active { background: #fff; color: #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    /* Halaman Login - Kampus Style */
+    .login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; padding: 20px; }
+    .login-box { background: #ffffff; width: 100%; max-width: 420px; padding: 40px 32px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); text-align: center; }
+    .login-logo { width: 100%; max-width: 250px; height: auto; object-fit: contain; margin-bottom: 20px; }
+    .login-box h2 { font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+    .login-box p { font-size: 14px; color: #64748b; margin-bottom: 24px; }
+    
+    .role-selector { display: flex; background: #f1f5f9; padding: 6px; border-radius: 12px; margin-bottom: 24px; }
+    .role-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; color: #64748b; transition: 0.3s; }
+    .role-btn.active { background: #ffffff; color: #1e40af; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    
+    .login-box input { width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 10px; margin-bottom: 16px; font-size: 14px; transition: 0.2s; }
+    .login-box input:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
 
-    /* Alert */
-    .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; font-weight: 500; }
-    .alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-    .alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    /* Card Layout (Untuk Dashboard) */
+    .card { background: #ffffff; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; margin-bottom: 24px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .card-title { font-size: 18px; font-weight: 700; color: #0f172a; }
+    
+    /* Styling Kalender (LMS Premium Look) */
+    .fc { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+    .fc-theme-standard td, .fc-theme-standard th { border-color: #e2e8f0; }
+    .fc-col-header-cell { padding: 12px 0 !important; background: #f8fafc; color: #334155; font-weight: 600; }
+    .fc-timegrid-slot { height: 45px !important; } /* Tinggi ideal biar nggak terlalu gepeng */
+    .fc-event { cursor: pointer; border-radius: 6px !important; padding: 4px 6px !important; font-size: 12px; font-weight: 600; border: none !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; }
+    .fc-event:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .fc-event-title { white-space: normal !important; line-height: 1.4; }
+    .fc-timegrid-axis-cushion { font-size: 12px; color: #64748b; }
+    
+    /* Tab Admin */
+    .admin-tabs { display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; overflow-x: auto; }
+    .tab-btn { background: transparent; border: none; font-weight: 600; font-size: 15px; color: #64748b; padding: 8px 16px; cursor: pointer; border-radius: 8px; transition: 0.2s; white-space: nowrap; }
+    .tab-btn:hover { background: #f1f5f9; }
+    .tab-btn.active { background: #eff6ff; color: #1e40af; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    /* Kalendar List View (Super Rapi & Lega) */
-    #calendar { margin-top: 24px; }
-    .fc { font-family: inherit; }
-    .fc-theme-standard .fc-list { border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
-    .fc-list-day-cushion { background: #f8fafc !important; padding: 12px !important; font-weight: 700; color: #0f172a; }
-    .fc-list-event { cursor: pointer; transition: background 0.2s; }
-    .fc-list-event:hover td { background: #f1f5f9; }
-    .fc-list-event-time { font-weight: 600; color: #475569; width: 100px; }
-    .fc-list-event-title { font-weight: 600; color: #0f172a; }
-    .fc-list-event-dot { border-color: #2563eb !important; }
+    /* Matriks Tabel */
+    .matrix-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 800px; }
+    .matrix-table th, .matrix-table td { padding: 12px; text-align: center; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; }
+    .matrix-table th { background: #f8fafc; color: #334155; font-weight: 700; position: sticky; top: 0; }
+    .cell-hadir { background: #f0fdf4; color: #166534; font-weight: 600; }
+    .cell-tidak { background: #fef2f2; color: #b91c1c; font-weight: 600; }
+    .cell-izin { background: #fffbeb; color: #b45309; font-weight: 600; }
 
-    /* Tabel Matriks Admin */
-    .matrix-wrap { overflow-x: auto; margin-top: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
-    .matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 800px; background: #fff; }
-    .matrix-table th, .matrix-table td { border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 12px; text-align: center; }
-    .matrix-table th { background: #f8fafc; color: #475569; font-weight: 600; position: sticky; top: 0; }
-    .matrix-table tr:last-child td { border-bottom: none; }
-    .cell-hadir { color: #166534; font-weight: 600; }
-    .cell-tidak { color: #b91c1c; font-weight: 600; }
-    .cell-izin { color: #b45309; font-weight: 600; }
-    .cell-kosong { color: #cbd5e1; }
+    /* Grafik Grid */
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .chart-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; }
+    @media(max-width: 768px) { .chart-grid { grid-template-columns: 1fr; } }
 
-    /* Modal / Pop-up Minimalis */
-    .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; opacity: 0; pointer-events: none; transition: 0.2s; }
+    /* Modal / Pop-up */
+    .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.2s; padding: 20px; }
     .modal.show { opacity: 1; pointer-events: auto; }
-    .modal-box { background: #fff; max-width: 400px; width: 100%; border-radius: 16px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); transform: translateY(15px); transition: 0.3s; }
+    .modal-box { background: #ffffff; width: 100%; max-width: 420px; padding: 28px; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: translateY(20px); transition: 0.3s; }
     .modal.show .modal-box { transform: translateY(0); }
-
-    .status-group { display: flex; gap: 8px; margin: 16px 0; }
-    .status-opt { flex: 1; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; text-align: center; font-weight: 600; font-size: 13px; color: #64748b; cursor: pointer; transition: 0.2s; }
+    
+    .status-group { display: flex; gap: 10px; margin: 16px 0; }
+    .status-opt { flex: 1; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; text-align: center; font-weight: 600; font-size: 13px; color: #64748b; cursor: pointer; transition: 0.2s; }
     .status-opt.active[data-val="Hadir"] { border-color: #22c55e; background: #f0fdf4; color: #15803d; }
     .status-opt.active[data-val="Tidak Hadir"] { border-color: #ef4444; background: #fef2f2; color: #b91c1c; }
     .status-opt.active[data-val="Izin"] { border-color: #f59e0b; background: #fffbeb; color: #b45309; }
-    textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 13px; transition: border-color 0.2s; }
-    textarea:focus { outline: none; border-color: #2563eb; }
+    
+    textarea { width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: 13px; outline: none; transition: 0.2s; }
+    textarea:focus { border-color: #1e40af; }
+
+    /* Alert */
+    .alert { padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
+    .alert-error { background: #fef2f2; color: #b91c1c; border-left: 4px solid #ef4444; }
+    .alert-success { background: #f0fdf4; color: #15803d; border-left: 4px solid #22c55e; }
   </style>
 </head>
 <body>
 
-  <!-- ==================== HALAMAN LOGIN ==================== -->
-  <div id="loginSection">
-    <div class="login-header">
-      <img src="Logo-removebg-preview.jpg" alt="Logo SMPN 177">
-      <h1>JURNAL KELAS</h1>
-      <p>SMP Negeri 177 Jakarta</p>
+  <!-- NAVIGASI (Disembunyikan di halaman login) -->
+  <nav class="navbar hidden" id="navbar">
+    <div class="nav-brand">
+      <img src="Logo-removebg-preview.jpg" alt="Logo" onerror="this.style.display='none'">
+      <span>Portal Akademik 177</span>
     </div>
+    <div style="display: flex; gap: 10px;">
+      <button class="btn" onclick="bukaModalPassword()">Ganti Password</button>
+      <button class="btn btn-danger" onclick="logout()">Keluar</button>
+    </div>
+  </nav>
 
-    <div class="container">
-      <div class="login-wrapper">
-        <h2 style="font-size:18px; font-weight:600; margin-bottom:20px; text-align:center; color:#0f172a;">Masuk ke Akun</h2>
-        <div id="loginAlert" class="hidden alert"></div>
-        
-        <div class="role-selector">
-          <div class="role-btn active" data-role="ketua" onclick="pilihRole('ketua')">👨‍🎓 Ketua Kelas</div>
-          <div class="role-btn" data-role="admin" onclick="pilihRole('admin')">🛡️ Admin</div>
-        </div>
-        
-        <div id="loginFields">
-          <input type="text" id="loginUsername" placeholder="Username (Contoh: 7A)" />
-          <input type="password" id="loginPassword" placeholder="Password" />
-          <button class="btn btn-primary" style="width:100%; padding:12px; margin-top:8px;" onclick="handleLogin()">Masuk</button>
-        </div>
+  <!-- ==================== HALAMAN LOGIN ==================== -->
+  <div id="loginSection" class="login-container">
+    <div class="login-box">
+      <!-- Pastikan gambar Logo-removebg-preview.jpg ada di root GitHub lu -->
+      <img src="Logo-removebg-preview.jpg" alt="Logo SMPN 177" class="login-logo" onerror="this.src='https://via.placeholder.com/250x70?text=SMPN+177+JAKARTA'">
+      <h2>JURNAL KELAS</h2>
+      <p>Sistem Pemantauan Kehadiran Guru</p>
+      
+      <div id="loginAlert" class="hidden alert"></div>
+      
+      <div class="role-selector">
+        <div class="role-btn active" data-role="ketua" onclick="pilihRole('ketua')">👨‍🎓 Ketua Kelas</div>
+        <div class="role-btn" data-role="admin" onclick="pilihRole('admin')">🛡️ Admin</div>
+      </div>
+      
+      <div id="loginFields">
+        <input type="text" id="loginUsername" placeholder="Username (Contoh: 7A)" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+        <button class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 15px;" onclick="handleLogin()">Masuk ke Sistem</button>
       </div>
     </div>
   </div>
 
   <!-- ==================== DASHBOARD UTAMA ==================== -->
-  <div id="dashboardSection" class="hidden">
-    <!-- Navbar Minimalis -->
-    <div style="background: #fff; padding: 16px 20px; border-bottom: 1px solid #e2e8f0; margin-bottom: 30px;">
-      <div class="container" style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="font-weight:700; color:#0f172a; font-size:18px;">📋 Jurnal SMPN 177</div>
-        <div style="display:flex; gap:10px;">
-          <button class="btn" onclick="bukaModalPassword()">Ganti Password</button>
-          <button class="btn btn-danger" onclick="logout()">Keluar</button>
+  <div id="dashboardSection" class="hidden container">
+    
+    <!-- DASHBOARD KETUA KELAS (KALENDER LMS) -->
+    <div id="dashKetuaView" class="hidden card">
+      <div class="card-header">
+        <div>
+          <div class="card-title" id="dashTitleKetua">Jadwal Kelas</div>
+          <p style="font-size:14px; color:#64748b; margin-top:4px;">Klik pada blok mata pelajaran di kalender untuk mengisi presensi guru.</p>
         </div>
       </div>
+      <div id="calendarKetua"></div>
     </div>
 
-    <div class="container">
-      
-      <!-- DASHBOARD KETUA KELAS -->
-      <div id="dashKetuaView" class="hidden main-card">
-        <h2 id="dashTitleKetua" style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:4px;">Jadwal Kelas</h2>
-        <p style="font-size:14px; color:#64748b;">Klik pada mata pelajaran di daftar bawah ini untuk mengisi presensi kehadiran guru.</p>
-        
-        <!-- Kalender List View -->
-        <div id="calendar"></div>
+    <!-- DASHBOARD ADMIN (TABS: REKAP, KALENDER KELAS, GRAFIK) -->
+    <div id="dashAdminView" class="hidden">
+      <div class="admin-tabs">
+        <button class="tab-btn active" onclick="switchAdminTab('tabRekap', this)">📋 Rekap Matriks</button>
+        <button class="tab-btn" onclick="switchAdminTab('tabKalenderAdmin', this)">📅 Kalender Kelas</button>
+        <button class="tab-btn" onclick="switchAdminTab('tabGrafik', this)">📊 Statistik Grafik</button>
       </div>
 
-      <!-- DASHBOARD ADMIN (MATRIKS REKAP) -->
-      <div id="dashAdminView" class="hidden main-card">
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
-          <div>
-            <h2 style="font-size:20px; font-weight:700; color:#0f172a; margin-bottom:4px;">Rekapitulasi Kehadiran</h2>
-            <p style="font-size:14px; color:#64748b;">Pantau laporan kehadiran guru dari seluruh kelas.</p>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <input type="date" id="adminFilterTanggal" onchange="loadAdminData()" style="padding:10px 14px; border:1px solid #e2e8f0; border-radius:8px; font-family:inherit; font-size:13px;" />
-            <button class="btn btn-primary" onclick="loadAdminData()">Refresh Data</button>
+      <!-- TAB 1: REKAP MATRIKS -->
+      <div id="tabRekap" class="tab-content active card">
+        <div class="card-header">
+          <div class="card-title">Rekapitulasi Kehadiran Harian</div>
+          <div style="display:flex; gap:10px;">
+            <input type="date" id="adminFilterTanggal" onchange="loadAdminMatriks()" style="padding:8px 14px; border:1px solid #e2e8f0; border-radius:8px; outline:none;" />
+            <button class="btn btn-primary" onclick="loadAdminMatriks()">Refresh Data</button>
           </div>
         </div>
-
         <div class="matrix-wrap">
           <table class="matrix-table">
             <thead>
               <tr>
-                <th style="background:#f1f5f9;">Kelas</th>
-                <th>Jam 1</th><th>Jam 2</th><th>Jam 3</th><th>Jam 4</th><th>Jam 5</th><th>Jam 6</th><th>Jam 7</th><th>Jam 8</th><th>Jam 9</th>
+                <th>Kelas</th><th>Jam 1</th><th>Jam 2</th><th>Jam 3</th><th>Jam 4</th><th>Jam 5</th><th>Jam 6</th><th>Jam 7</th><th>Jam 8</th><th>Jam 9</th>
               </tr>
             </thead>
-            <tbody id="matrixBody">
-              <!-- Diisi oleh Javascript -->
-            </tbody>
+            <tbody id="matrixBody"></tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: KALENDER PER KELAS (FITUR BARU UNTUK ADMIN) -->
+      <div id="tabKalenderAdmin" class="tab-content card">
+        <div class="card-header">
+          <div class="card-title">Pantau Jadwal Spesifik Kelas</div>
+          <select id="adminPilihKelas" onchange="loadAdminKalender()" style="padding:10px 16px; border:1px solid #e2e8f0; border-radius:8px; outline:none; font-weight:600; font-size:14px;">
+            <option value="VII A">Kelas VII A</option><option value="VII B">Kelas VII B</option><option value="VII C">Kelas VII C</option><option value="VII D">Kelas VII D</option><option value="VII E">Kelas VII E</option>
+            <option value="VIII A">Kelas VIII A</option><option value="VIII B">Kelas VIII B</option>
+            <option value="IX A">Kelas IX A</option><option value="IX B">Kelas IX B</option>
+            <!-- Bisa ditambah sesuai list kelas lu -->
+          </select>
+        </div>
+        <div id="calendarAdmin"></div>
+      </div>
+
+      <!-- TAB 3: GRAFIK / STATISTIK (FITUR BARU UNTUK ADMIN) -->
+      <div id="tabGrafik" class="tab-content">
+        <div class="chart-grid">
+          <!-- Grafik Harian -->
+          <div class="chart-box">
+            <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; text-align:center;">Statistik Harian (Sesuai Tanggal Filter)</h3>
+            <canvas id="chartHarian"></canvas>
+          </div>
+          <!-- Grafik Semester -->
+          <div class="chart-box">
+            <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; text-align:center;">Tren Kehadiran (Semester / Tahunan)</h3>
+            <canvas id="chartSemester"></canvas>
+          </div>
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- ==================== MODAL WELCOME ==================== -->
+  <!-- ==================== MODAL WELCOME (KHUSUS KETUA) ==================== -->
   <div id="modalWelcome" class="modal">
     <div class="modal-box" style="text-align:center;">
-      <div style="font-size:40px; margin-bottom:12px;">👋</div>
-      <h3 style="font-size:18px; font-weight:600; margin-bottom:8px; color:#0f172a;">Selamat Datang!</h3>
-      <p style="font-size:14px; color:#64748b; line-height:1.5; margin-bottom:24px;">
-        Website ini dirancang <b>khusus untuk Ketua Kelas</b> dalam melaporkan kehadiran guru setiap pergantian jam pelajaran. Pastikan lapor dengan jujur ya!
+      <div style="font-size:45px; margin-bottom:10px;">👋</div>
+      <h3 style="font-size:20px; font-weight:700; color:#1e3a8a; margin-bottom:8px;">Selamat Datang Ketua!</h3>
+      <p style="font-size:14px; color:#64748b; line-height:1.6; margin-bottom:24px;">
+        Sistem ini digunakan <b>khusus untuk Ketua Kelas</b> dalam melaporkan kehadiran guru setiap pergantian jam pelajaran. Mohon diisi dengan jujur dan disiplin.
       </p>
-      <button class="btn btn-primary" style="width:100%; padding:12px;" onclick="tutupWelcome()">Saya Mengerti</button>
+      <button class="btn btn-primary" style="width:100%; padding:14px;" onclick="document.getElementById('modalWelcome').classList.remove('show')">Saya Mengerti</button>
     </div>
   </div>
 
   <!-- ==================== MODAL ISI JURNAL ==================== -->
   <div id="modalJurnal" class="modal">
     <div class="modal-box">
-      <h3 id="mTitle" style="font-size:16px; font-weight:600; margin-bottom:4px;">Jam ke-1: Matematika</h3>
-      <p style="font-size:13px; color:#64748b; margin-bottom:8px;">Guru Pengampu: <strong id="mGuru" style="color:#1e293b;">-</strong></p>
+      <h3 id="mTitle" style="font-size:18px; font-weight:700; margin-bottom:4px; color:#0f172a;">Jam ke-1: Matematika</h3>
+      <p style="font-size:13px; color:#64748b; margin-bottom:16px;">Guru: <strong id="mGuru" style="color:#1e3a8a;">-</strong></p>
       
       <div class="status-group">
         <div class="status-opt" data-val="Hadir" onclick="pilihStatus(this)">✅ Hadir</div>
@@ -194,13 +245,13 @@
         <div class="status-opt" data-val="Izin" onclick="pilihStatus(this)">📝 Izin</div>
       </div>
       
-      <div id="boxKet" style="display:none; margin-top:16px;">
-        <textarea id="mKet" rows="3" placeholder="Tuliskan tugas atau alasan guru berhalangan hadir..."></textarea>
+      <div id="boxKet" class="hidden" style="margin-top:16px;">
+        <textarea id="mKet" rows="3" placeholder="Tuliskan tugas yang diberikan atau alasan jika guru tidak hadir..."></textarea>
       </div>
 
-      <div style="display:flex; gap:8px; margin-top:24px;">
-        <button class="btn" style="flex:1;" onclick="tutupModalJurnal()">Batal</button>
-        <button class="btn btn-primary" style="flex:1;" onclick="simpanJurnal()">Kirim</button>
+      <div style="display:flex; gap:12px; margin-top:24px;">
+        <button class="btn" style="flex:1;" onclick="document.getElementById('modalJurnal').classList.remove('show')">Batal</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="simpanJurnal()">Simpan Laporan</button>
       </div>
     </div>
   </div>
@@ -208,29 +259,33 @@
   <!-- ==================== MODAL GANTI PASSWORD ==================== -->
   <div id="modalPassword" class="modal">
     <div class="modal-box">
-      <h3 style="font-size:16px; font-weight:600; margin-bottom:16px;">Ganti Password</h3>
+      <h3 style="font-size:18px; font-weight:700; margin-bottom:20px;">Ganti Password</h3>
       <div id="passAlert" class="hidden alert"></div>
       
-      <input type="password" id="passLama" placeholder="Password Lama" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:12px;" />
-      <input type="password" id="passBaru" placeholder="Password Baru" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:20px;" />
+      <input type="password" id="passLama" placeholder="Password Lama" style="width:100%; padding:14px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:12px; outline:none;" />
+      <input type="password" id="passBaru" placeholder="Password Baru" style="width:100%; padding:14px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:24px; outline:none;" />
       
-      <div style="display:flex; gap:8px;">
-        <button class="btn" style="flex:1;" onclick="tutupModalPassword()">Batal</button>
-        <button class="btn btn-primary" style="flex:1;" onclick="prosesGantiPassword()">Simpan</button>
+      <div style="display:flex; gap:12px;">
+        <button class="btn" style="flex:1;" onclick="document.getElementById('modalPassword').classList.remove('show')">Batal</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="prosesGantiPassword()">Simpan Sandi</button>
       </div>
     </div>
   </div>
 
 <script>
 // =======================================================
-// URL WEB APP LU
+// URL WEB APP GAS LU
 // =======================================================
 const API_URL = 'https://script.google.com/macros/s/AKfycbz2PPlOenLDm7LM-vNfyvgXtQFWTYxDfD1juk8ONJjRYp571wNxJ_LWhCyvQjUiDWk/exec'; 
 
 let currentUser = null; 
-let calendar = null;
+let calKetua = null;
+let calAdmin = null;
 let selectedEventData = null;
+let chartHarianObj = null;
+let chartSemesterObj = null;
 
+// Fungsi Fetch Standar
 function callApi(action, data) {
   return fetch(API_URL, {
     method: 'POST',
@@ -241,6 +296,7 @@ function callApi(action, data) {
   .catch(err => ({ success: false, message: 'Gagal terhubung ke Server.' }));
 }
 
+// ==================== LOGIN SYSTEM ====================
 let selectedRole = 'ketua';
 function pilihRole(role) {
   selectedRole = role;
@@ -257,7 +313,7 @@ async function handleLogin() {
   if(!user || !pass) { showAlert('Harap isi semua kolom!', 'error'); return; }
 
   const btnLogin = document.querySelector('#loginFields button');
-  btnLogin.textContent = 'Memproses...'; btnLogin.disabled = true;
+  btnLogin.textContent = 'Memverifikasi...'; btnLogin.disabled = true;
 
   if(selectedRole === 'admin') {
     if(pass === 'admin177') {
@@ -265,7 +321,7 @@ async function handleLogin() {
       masukDashboard();
     } else {
       showAlert('Password admin salah!', 'error');
-      btnLogin.textContent = 'Masuk'; btnLogin.disabled = false;
+      btnLogin.textContent = 'Masuk ke Sistem'; btnLogin.disabled = false;
     }
     return;
   }
@@ -277,7 +333,7 @@ async function handleLogin() {
     document.getElementById('modalWelcome').classList.add('show');
   } else {
     showAlert(res.message, 'error');
-    btnLogin.textContent = 'Masuk'; btnLogin.disabled = false;
+    btnLogin.textContent = 'Masuk ke Sistem'; btnLogin.disabled = false;
   }
 }
 
@@ -290,56 +346,58 @@ function showAlert(msg, type) {
 
 function masukDashboard() {
   document.getElementById('loginSection').classList.add('hidden');
+  document.getElementById('navbar').classList.remove('hidden');
   document.getElementById('dashboardSection').classList.remove('hidden');
   
   if(currentUser.role === 'admin') {
     document.getElementById('dashAdminView').classList.remove('hidden');
     document.getElementById('adminFilterTanggal').value = new Date().toISOString().split('T')[0];
-    loadAdminData();
+    loadAdminMatriks();
+    loadAdminGrafik(); // Load grafik semester di awal
   } else {
     document.getElementById('dashKetuaView').classList.remove('hidden');
     document.getElementById('dashTitleKetua').textContent = `Jadwal Kelas ${currentUser.kelas}`;
-    initKalender();
+    initKalenderKetua();
   }
 }
 
 function logout() { location.reload(); }
-function tutupWelcome() { document.getElementById('modalWelcome').classList.remove('show'); }
 
-// ==================== KALENDER KETUA KELAS DENGAN DATA NGEBUT (BULK REQUEST) ====================
-function initKalender() {
-  const calendarEl = document.getElementById('calendar');
-  calendar = new FullCalendar.Calendar(calendarEl, {
+// ==================== KALENDER KETUA KELAS (LMS STYLE) ====================
+function initKalenderKetua() {
+  const calEl = document.getElementById('calendarKetua');
+  calKetua = new FullCalendar.Calendar(calEl, {
     locale: 'id',
-    initialView: 'listWeek',
-    headerToolbar: { left: 'prev,next today', center: 'title', right: 'listWeek,timeGridDay' },
+    initialView: 'timeGridWeek', // Tampilan blok jadwal profesional
+    headerToolbar: { left: 'prev,next today', center: 'title', right: 'timeGridWeek,timeGridDay' },
     hiddenDays: [0, 6], 
+    slotMinTime: '06:30:00',
+    slotMaxTime: '15:00:00',
+    allDaySlot: false,
     height: 'auto',
+    expandRows: true,
     events: function(fetchInfo, successCallback, failureCallback) {
-      loadJadwalEvents(successCallback);
+      loadJadwalDataBulk(currentUser.kelas, successCallback);
     },
     eventClick: function(info) {
       bukaModalJurnal(info.event);
     }
   });
-  calendar.render();
+  calKetua.render();
 }
 
-async function loadJadwalEvents(callback) {
-  // Panggil endpoint baru yang bulk request
-  const res = await callApi('getJadwalMingguan', { kelas: currentUser.kelas });
+// Tarikan Data Cepat (Bulk Request Mingguan)
+async function loadJadwalDataBulk(kelas, callback) {
+  const res = await callApi('getJadwalMingguan', { kelas: kelas });
   let events = [];
   
   if(res.success && res.data && res.data.length > 0) {
     let curr = new Date();
     let first = curr.getDate() - curr.getDay() + 1;
     let seninIni = new Date(curr.setDate(first));
-    
-    // Kamus buat nentuin selisih hari dari Senin
     const mapHari = { 'Senin': 0, 'Selasa': 1, 'Rabu': 2, 'Kamis': 3, 'Jumat': 4 };
 
     res.data.forEach(j => {
-      // Pastikan harinya valid
       if(mapHari[j.hari] !== undefined) {
         let tgl = new Date(seninIni);
         tgl.setDate(seninIni.getDate() + mapHari[j.hari]);
@@ -357,9 +415,11 @@ async function loadJadwalEvents(callback) {
 
         events.push({
           id: `${tglStr}-${j.jam}`,
-          title: `Jam ${j.jam}: ${j.mapel} (${j.guru})`,
+          title: `${j.mapel}\n${j.guru}`,
           start: `${tglStr}T${start}:00`,
           end: `${tglStr}T${end}:00`,
+          backgroundColor: '#1e40af', // Biru kampus premium
+          borderColor: '#1e3a8a',
           extendedProps: { jam: j.jam, mapel: j.mapel, guru: j.guru, tanggal: tglStr }
         });
       }
@@ -368,68 +428,155 @@ async function loadJadwalEvents(callback) {
   callback(events);
 }
 
-// ==================== DASHBOARD ADMIN (REKAP MATRIKS) ====================
-async function loadAdminData() {
-  const btn = document.querySelector('#dashAdminView .btn-primary');
-  btn.textContent = 'Memuat...';
+// ==================== DASHBOARD ADMIN ====================
+function switchAdminTab(tabId, btnEl) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
   
+  btnEl.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+
+  // Render ulang kalender admin pas tabnya dibuka biar gak glitch ukurannya
+  if(tabId === 'tabKalenderAdmin' && !calAdmin) {
+    initKalenderAdmin();
+  } else if (tabId === 'tabKalenderAdmin') {
+    calAdmin.render();
+  }
+}
+
+// --- ADMIN TAB 1: MATRIKS REKAP ---
+async function loadAdminMatriks() {
   const tglPilih = document.getElementById('adminFilterTanggal').value;
   const res = await callApi('getLaporan', { filterTanggal: tglPilih });
   
   let rekapMap = {};
   if(res.success && res.data) {
-    res.data.forEach(row => {
-      rekapMap[row.kelas + '-' + row.jamKe] = row.kehadiran;
-    });
+    res.data.forEach(row => { rekapMap[row.kelas + '-' + row.jamKe] = row.kehadiran; });
   }
+  // Data Grafik Harian
+  updateGrafikHarian(res.data || []);
 
   const romawi = ['VII', 'VIII', 'IX'];
-  let listKelasFinal = [];
+  let tbodyHtml = '';
   romawi.forEach(rom => {
     ['A','B','C','D','E','F','G','H','I'].forEach(h => {
-      listKelasFinal.push(`${rom} ${h}`);
+      let kls = `${rom} ${h}`;
+      tbodyHtml += `<tr><td style="font-weight:700; background:#f8fafc; color:#1e3a8a;">${kls}</td>`;
+      for(let jam=1; jam<=9; jam++) {
+        let status = rekapMap[kls + '-' + jam] || '';
+        let badgeClass = 'cell-kosong'; let text = '—';
+        if(status === 'Hadir') { badgeClass = 'cell-hadir'; text = 'Hadir'; }
+        else if(status === 'Tidak Hadir') { badgeClass = 'cell-tidak'; text = 'Tidak'; }
+        else if(status === 'Izin') { badgeClass = 'cell-izin'; text = 'Izin'; }
+        tbodyHtml += `<td class="${badgeClass}">${text}</td>`;
+      }
+      tbodyHtml += `</tr>`;
     });
   });
-
-  let tbodyHtml = '';
-  listKelasFinal.forEach(kls => {
-    tbodyHtml += `<tr><td style="font-weight:600; color:#0f172a;">${kls}</td>`;
-    for(let jam=1; jam<=9; jam++) {
-      let status = rekapMap[kls + '-' + jam] || '';
-      let badgeClass = 'cell-kosong';
-      let text = '—';
-      if(status === 'Hadir') { badgeClass = 'cell-hadir'; text = 'Hadir'; }
-      else if(status === 'Tidak Hadir') { badgeClass = 'cell-tidak'; text = 'Tidak'; }
-      else if(status === 'Izin') { badgeClass = 'cell-izin'; text = 'Izin'; }
-
-      tbodyHtml += `<td class="${badgeClass}">${text}</td>`;
-    }
-    tbodyHtml += `</tr>`;
-  });
-
   document.getElementById('matrixBody').innerHTML = tbodyHtml;
-  btn.textContent = 'Refresh Data';
 }
 
-// MODAL JURNAL
+// --- ADMIN TAB 2: KALENDER PER KELAS ---
+function initKalenderAdmin() {
+  const calEl = document.getElementById('calendarAdmin');
+  calAdmin = new FullCalendar.Calendar(calEl, {
+    locale: 'id',
+    initialView: 'timeGridWeek',
+    headerToolbar: { left: 'prev,next today', center: 'title', right: 'timeGridWeek,timeGridDay' },
+    hiddenDays: [0, 6], slotMinTime: '06:30:00', slotMaxTime: '15:00:00', allDaySlot: false, height: 'auto', expandRows: true,
+    events: function(fetchInfo, successCallback, failureCallback) {
+      const kls = document.getElementById('adminPilihKelas').value;
+      loadJadwalDataBulk(kls, successCallback);
+    },
+    eventClick: function(info) {
+      alert(`Jadwal: ${info.event.title}\nJam ke-${info.event.extendedProps.jam}`);
+    }
+  });
+  calAdmin.render();
+}
+
+function loadAdminKalender() {
+  if(calAdmin) calAdmin.refetchEvents();
+}
+
+// --- ADMIN TAB 3: GRAFIK STATISTIK (Chart.js) ---
+function updateGrafikHarian(laporanHarian) {
+  let hadir = 0, tidak = 0, izin = 0;
+  laporanHarian.forEach(r => {
+    if(r.kehadiran === 'Hadir') hadir++;
+    else if(r.kehadiran === 'Tidak Hadir') tidak++;
+    else if(r.kehadiran === 'Izin') izin++;
+  });
+
+  const ctx = document.getElementById('chartHarian').getContext('2d');
+  if(chartHarianObj) chartHarianObj.destroy();
+  chartHarianObj = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Hadir', 'Tidak Hadir', 'Izin'],
+      datasets: [{ data: [hadir, tidak, izin], backgroundColor: ['#22c55e', '#ef4444', '#f59e0b'] }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+}
+
+async function loadAdminGrafik() {
+  // Panggil getLaporan tanpa filter tanggal (ambil semua data semester)
+  const res = await callApi('getLaporan', { filterTanggal: '' });
+  if(res.success && res.data) {
+    let blnMap = {}; // Grouping by YYYY-MM
+    res.data.forEach(r => {
+      if(!r.tanggal) return;
+      let bln = r.tanggal.substring(0, 7); // Ambil YYYY-MM
+      if(!blnMap[bln]) blnMap[bln] = { hadir:0, tidak:0, izin:0 };
+      if(r.kehadiran === 'Hadir') blnMap[bln].hadir++;
+      else if(r.kehadiran === 'Tidak Hadir') blnMap[bln].tidak++;
+      else if(r.kehadiran === 'Izin') blnMap[bln].izin++;
+    });
+
+    const labels = Object.keys(blnMap).sort(); // Sort by Date
+    const dHadir = labels.map(b => blnMap[b].hadir);
+    const dTidak = labels.map(b => blnMap[b].tidak);
+    const dIzin = labels.map(b => blnMap[b].izin);
+
+    const ctx = document.getElementById('chartSemester').getContext('2d');
+    if(chartSemesterObj) chartSemesterObj.destroy();
+    chartSemesterObj = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Hadir', data: dHadir, backgroundColor: '#22c55e' },
+          { label: 'Tidak Hadir', data: dTidak, backgroundColor: '#ef4444' },
+          { label: 'Izin', data: dIzin, backgroundColor: '#f59e0b' }
+        ]
+      },
+      options: { responsive: true, scales: { x: { stacked: true }, y: { stacked: true } } }
+    });
+  }
+}
+
+// ==================== FUNGSI MODAL JURNAL (KETUA) ====================
 function bukaModalJurnal(event) {
   selectedEventData = event.extendedProps;
   document.getElementById('mTitle').textContent = `Jam ke-${selectedEventData.jam}: ${selectedEventData.mapel}`;
   document.getElementById('mGuru').textContent = selectedEventData.guru;
   
   document.querySelectorAll('.status-opt').forEach(el => el.classList.remove('active'));
-  document.getElementById('boxKet').style.display = 'none';
+  document.getElementById('boxKet').classList.add('hidden');
   document.getElementById('mKet').value = '';
   document.getElementById('modalJurnal').classList.add('show');
 }
-
-function tutupModalJurnal() { document.getElementById('modalJurnal').classList.remove('show'); }
 
 function pilihStatus(el) {
   document.querySelectorAll('.status-opt').forEach(e => e.classList.remove('active'));
   el.classList.add('active');
   const val = el.getAttribute('data-val');
-  document.getElementById('boxKet').style.display = (val === 'Tidak Hadir' || val === 'Izin') ? 'block' : 'none';
+  if(val === 'Tidak Hadir' || val === 'Izin') {
+    document.getElementById('boxKet').classList.remove('hidden');
+  } else {
+    document.getElementById('boxKet').classList.add('hidden');
+  }
 }
 
 async function simpanJurnal() {
@@ -453,14 +600,15 @@ async function simpanJurnal() {
   const res = await callApi('submitJurnal', payload);
   if(res.success) {
     alert('✅ Laporan berhasil dikirim ke sistem!');
-    tutupModalJurnal();
+    document.getElementById('modalJurnal').classList.remove('show');
+    // Opsional: ganti warna event kalender jadi hijau setelah disubmit
   } else {
     alert('❌ Gagal: ' + res.message);
   }
 }
 
+// ==================== GANTI PASSWORD ====================
 function bukaModalPassword() { document.getElementById('modalPassword').classList.add('show'); }
-function tutupModalPassword() { document.getElementById('modalPassword').classList.remove('show'); }
 
 async function prosesGantiPassword() {
   const passLama = document.getElementById('passLama').value;
@@ -468,17 +616,11 @@ async function prosesGantiPassword() {
   if(!passLama || !passBaru) { alert('Isi semua kolom password!'); return; }
 
   const res = await callApi('ubahPassword', {
-    username: currentUser.username,
-    passwordLama: passLama,
-    passwordBaru: passBaru,
-    isAdmin: currentUser.role === 'admin'
+    username: currentUser.username, passwordLama: passLama, passwordBaru: passBaru, isAdmin: currentUser.role === 'admin'
   });
 
-  const al = document.getElementById('passAlert');
-  al.textContent = res.message;
-  al.className = 'alert ' + (res.success ? 'alert-success' : 'alert-error');
-  al.classList.remove('hidden');
-  if(res.success) { setTimeout(tutupModalPassword, 1500); }
+  alert(res.message);
+  if(res.success) { document.getElementById('modalPassword').classList.remove('show'); }
 }
 </script>
 </body>
