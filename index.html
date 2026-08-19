@@ -180,7 +180,7 @@
         <div class="card-header">
           <div class="card-title">Pantau Jadwal Spesifik Kelas</div>
           <select id="adminPilihKelas" onchange="loadAdminKalender()" style="padding:10px 16px; border:1px solid #e2e8f0; border-radius:8px; outline:none; font-weight:600; font-size:14px;">
-            <!-- Diisi otomatis pakai Javascript biar super lengkap -->
+            <!-- Diisi otomatis pakai Javascript -->
           </select>
         </div>
         <div id="calendarAdmin"></div>
@@ -268,7 +268,7 @@ let calAdmin = null;
 let selectedEventData = null;
 let chartHarianObj = null;
 let chartSemesterObj = null;
-let globalLaporanData = []; // Buat nyimpen data grafik biar bisa difilter
+let globalLaporanData = []; 
 
 // Bikin List Kelas Lengkap buat Dropdown Admin
 const romawiKelas = ['VII', 'VIII', 'IX'];
@@ -278,7 +278,6 @@ romawiKelas.forEach(r => {
   abjadKelas.forEach(a => { listKelasLengkap.push(`${r} ${a}`); });
 });
 
-// Masukin ke dropdown admin
 window.onload = function() {
   const selectKelas = document.getElementById('adminPilihKelas');
   listKelasLengkap.forEach(kls => {
@@ -286,6 +285,17 @@ window.onload = function() {
     opt.value = kls; opt.innerHTML = `Kelas ${kls}`;
     selectKelas.appendChild(opt);
   });
+}
+
+// 🔥 FITUR BARU: Penyelamat Beda Penulisan Kelas ("7A" vs "VII A")
+function normalisasiKelas(k) {
+  if(!k) return '';
+  let s = String(k).toUpperCase().trim();
+  // Ubah angka jadi Romawi
+  s = s.replace(/7/g, 'VII').replace(/8/g, 'VIII').replace(/9/g, 'IX');
+  // Pastikan ada spasi antara Romawi dan Huruf Kelas (contoh: VIIA jadi VII A)
+  s = s.replace(/^(VII|VIII|IX)\s*([A-Z])$/, '$1 $2');
+  return s;
 }
 
 function callApi(action, data) {
@@ -446,12 +456,19 @@ async function loadAdminMatriks() {
   btn.textContent = "Loading...";
   
   const tglPilih = document.getElementById('adminFilterTanggal').value;
-  const res = await callApi('getLaporan', { filterTanggal: tglPilih });
+  
+  // Ambil semua data sekaligus buat difilter manual di frontend (kebal error server)
+  const res = await callApi('getLaporan', { filterTanggal: '' });
   
   let rekapMap = {};
   if(res.success && res.data) {
-    // Karena kodingan Backend baru, sekarang data.kelas benar-benar menyimpan "VII A"
-    res.data.forEach(row => { rekapMap[row.kelas + '-' + row.jamKe] = row.kehadiran; });
+    res.data.forEach(row => { 
+      let tglData = row.tanggal ? String(row.tanggal).substring(0, 10) : '';
+      if(tglData === tglPilih) {
+        let klsNorm = normalisasiKelas(row.kelas);
+        rekapMap[klsNorm + '-' + row.jamKe] = row.kehadiran; 
+      }
+    });
   }
 
   let tbodyHtml = '';
@@ -494,15 +511,18 @@ function loadAdminKalender() {
   if(calAdmin) calAdmin.refetchEvents();
 }
 
-// ==================== GRAFIK DENGAN FILTER GURU ====================
 async function loadAdminGrafik() {
   const res = await callApi('getLaporan', { filterTanggal: '' });
   if(res.success && res.data) {
     globalLaporanData = res.data;
     
-    // Bikin list guru buat dropdown filter
     let gurus = new Set();
-    res.data.forEach(r => { if(r.guru) gurus.add(r.guru); });
+    res.data.forEach(r => { 
+      // Jaga-jaga kalau data kotor, jangan masukin spasi kosong atau "Hadir"
+      if(r.guru && String(r.guru).trim() !== '' && String(r.guru).trim() !== 'Hadir' && String(r.guru).trim() !== 'Tidak Hadir') {
+        gurus.add(r.guru); 
+      }
+    });
     
     let htmlFilter = '<option value="Semua">Semua Guru</option>';
     Array.from(gurus).sort().forEach(g => {
@@ -510,7 +530,6 @@ async function loadAdminGrafik() {
     });
     document.getElementById('filterGuruChart').innerHTML = htmlFilter;
 
-    // Render grafik perdana
     terapkanFilterGuru();
   }
 }
@@ -523,7 +542,6 @@ function terapkanFilterGuru() {
     dataFilter = globalLaporanData.filter(r => r.guru === selectedGuru);
   }
 
-  // Render Grafik Doughnut (Total semua data yang difilter)
   let hadir = 0, tidak = 0, izin = 0;
   dataFilter.forEach(r => {
     if(r.kehadiran === 'Hadir') hadir++;
@@ -542,11 +560,10 @@ function terapkanFilterGuru() {
     options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
   });
 
-  // Render Grafik Bar (Per Bulan/Semester)
   let blnMap = {}; 
   dataFilter.forEach(r => {
     if(!r.tanggal) return;
-    let bln = r.tanggal.substring(0, 7); // YYYY-MM
+    let bln = r.tanggal.substring(0, 7); 
     if(!blnMap[bln]) blnMap[bln] = { hadir:0, tidak:0, izin:0 };
     if(r.kehadiran === 'Hadir') blnMap[bln].hadir++;
     else if(r.kehadiran === 'Tidak Hadir') blnMap[bln].tidak++;
@@ -600,7 +617,6 @@ async function simpanJurnal() {
   const activeOpt = document.querySelector('.status-opt.active');
   if(!activeOpt) { alert('Pilih status kehadiran terlebih dahulu!'); return; }
   
-  // Kasih tau user kalo lagi loading biar gak diklik berkali-kali
   const btn = document.getElementById('btnSubmitJurnal');
   btn.textContent = "Sedang Mengirim...";
   btn.disabled = true;
@@ -627,7 +643,6 @@ async function simpanJurnal() {
     alert('❌ Gagal: ' + res.message);
   }
   
-  // Balikin tombol seperti semula
   btn.textContent = "Simpan Laporan";
   btn.disabled = false;
 }
