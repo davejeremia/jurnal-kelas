@@ -16,13 +16,13 @@
     /* Header ala SIS */
     .sis-header { background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%); color: #fff; padding: 30px 20px; text-align: center; border-bottom-left-radius: 36px; border-bottom-right-radius: 36px; box-shadow: 0 10px 30px rgba(37,99,235,0.2); }
     .logo-container { background: #fff; padding: 12px 24px; border-radius: 16px; display: inline-flex; gap: 16px; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 16px; }
-    .logo-container img { height: 35px; object-fit: contain; }
+    .logo-container span { font-weight: 700; color: #1e40af; font-size: 14px; }
     .sis-header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; }
     .sis-header p { font-size: 13px; opacity: 0.9; }
 
-    .container { max-width: 1200px; margin: -30px auto 0 auto; padding: 0 20px; position: relative; z-index: 10; }
+    .container { max-width: 1280px; margin: -30px auto 0 auto; padding: 0 20px; position: relative; z-index: 10; }
     
-    /* Kartu Statistik ala SIS */
+    /* Kartu Statistik */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: #fff; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; font-weight: 600; font-size: 14px; color: #334155; }
     .stat-card span { display: block; font-size: 20px; color: #2563eb; font-weight: 700; margin-top: 4px; }
@@ -51,11 +51,26 @@
     .alert-error { background: #fef2f2; color: #b91c1c; border-left: 4px solid #ef4444; }
     .alert-success { background: #f0fdf4; color: #15803d; border-left: 4px solid #22c55e; }
 
-    /* Kalender */
+    /* Kalendar Ketua Kelas */
     #calendar { margin-top: 20px; }
-    .fc-event { cursor: pointer; border-radius: 6px; padding: 4px; font-size: 11px; }
+    .fc { font-family: inherit; }
+    .fc-timegrid-slot { height: 60px !important; }
+    .fc-event { cursor: pointer; border-radius: 8px !important; padding: 8px 10px !important; font-size: 13px !important; font-weight: 600; box-shadow: 0 4px 10px rgba(37,99,235,0.2); border: none !important; }
+    .fc-event-title { font-weight: 700; white-space: normal !important; }
+    .fc-col-header-cell-cushion { font-size: 14px; font-weight: 700; color: #1e293b; padding: 10px 0 !important; }
+    .fc-timegrid-axis-cushion { font-size: 12px; font-weight: 600; color: #64748b; }
 
-    /* Modal Umum */
+    /* Tabel Matriks Admin */
+    .matrix-wrap { overflow-x: auto; margin-top: 15px; }
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 800px; background: #fff; }
+    .matrix-table th, .matrix-table td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
+    .matrix-table th { background: #f8fafc; color: #1e293b; font-weight: 700; position: sticky; top: 0; z-index: 2; }
+    .cell-hadir { background: #dcfce7; color: #166534; font-weight: 600; }
+    .cell-tidak { background: #fee2e2; color: #991b1b; font-weight: 600; }
+    .cell-izin { background: #fef3c7; color: #92400e; font-weight: 600; }
+    .cell-kosong { background: #ffffff; color: #94a3b8; }
+
+    /* Modal */
     .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; opacity: 0; pointer-events: none; transition: 0.2s; }
     .modal.show { opacity: 1; pointer-events: auto; }
     .modal-box { background: #fff; max-width: 450px; width: 100%; border-radius: 24px; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); transform: translateY(20px); transition: 0.3s; }
@@ -74,10 +89,9 @@
   <!-- HEADER ALA WEB SIS -->
   <div class="sis-header">
     <div class="logo-container">
-      <!-- Logo dummy instansi, bisa diganti link gambar lu -->
-      <span style="font-weight:700; color:#1e40af; font-size:14px;">DKI JAKARTA</span>
-      <span style="font-weight:700; color:#2563eb; font-size:14px;">PEMPROV DKI</span>
-      <span style="font-weight:700; color:#0e7490; font-size:14px;">SMPN 177</span>
+      <span>DKI JAKARTA</span>
+      <span>PEMPROV DKI</span>
+      <span>SMPN 177</span>
     </div>
     <h1>SISTEM INFORMASI JURNAL KELAS</h1>
     <p>SMP Negeri 177 Jakarta — Pantauan Kehadiran Guru & KBM Terpadu</p>
@@ -85,14 +99,14 @@
 
   <div class="container">
     
-    <!-- KARTU STATISTIK (Hanya muncul setelah login) -->
+    <!-- KARTU STATISTIK -->
     <div id="statsBar" class="stats-grid hidden">
       <div class="stat-card">Status Sistem<span>🟢 Online 24/7</span></div>
       <div class="stat-card">Penyimpanan Data<span>🔒 Real-time Spreadsheet</span></div>
       <div class="stat-card">Akses Pengguna<span>👥 Ketua Kelas & Admin</span></div>
     </div>
 
-    <!-- ==================== HALAMAN LOGIN ==================== -->
+    <!-- LOGIN -->
     <div id="loginView" class="login-wrapper">
       <h2 style="font-size:18px; font-weight:700; margin-bottom:16px; text-align:center; color:#1e293b;">Silakan Masuk</h2>
       <div id="loginAlert" class="hidden alert"></div>
@@ -109,28 +123,53 @@
       </div>
     </div>
 
-    <!-- ==================== DASHBOARD UTAMA ==================== -->
-    <div id="dashboardView" class="hidden main-card">
+    <!-- DASHBOARD KETUA KELAS -->
+    <div id="dashKetuaView" class="hidden main-card">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
         <div>
-          <h2 id="dashTitle" style="font-size:20px; font-weight:700; color:#0f172a;">Dashboard Jurnal</h2>
-          <p id="dashSub" style="font-size:13px; color:#64748b;">Kelola laporan kehadiran guru dengan mudah dan cepat.</p>
+          <h2 id="dashTitleKetua" style="font-size:20px; font-weight:700; color:#0f172a;">Jadwal Kelas</h2>
+          <p style="font-size:13px; color:#64748b;">Klik pada jam pelajaran di kalender untuk mencatat kehadiran guru.</p>
         </div>
         <div style="display:flex; gap:8px;">
           <button class="btn" onclick="bukaModalPassword()">🔑 Ganti Password</button>
           <button class="btn btn-danger" onclick="logout()">🚪 Keluar</button>
         </div>
       </div>
-
-      <div id="dashAlert" class="hidden alert"></div>
-
-      <!-- Wadah Kalender / Konten -->
       <div id="calendar"></div>
+    </div>
+
+    <!-- DASHBOARD ADMIN (MATRIKS REKAP) -->
+    <div id="dashAdminView" class="hidden main-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+        <div>
+          <h2 style="font-size:20px; font-weight:700; color:#0f172a;">🛡️ Dashboard Admin - Rekapitulasi Keseluruhan</h2>
+          <p style="font-size:13px; color:#64748b;">Pantau laporan kehadiran guru dari seluruh kelas SMPN 177 Jakarta.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <input type="date" id="adminFilterTanggal" onchange="loadAdminData()" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px;" />
+          <button class="btn btn-primary" onclick="loadAdminData()">🔄 Refresh</button>
+          <button class="btn btn-danger" onclick="logout()">🚪 Keluar</button>
+        </div>
+      </div>
+
+      <div class="matrix-wrap">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Kelas</th>
+              <th>Jam 1</th><th>Jam 2</th><th>Jam 3</th><th>Jam 4</th><th>Jam 5</th><th>Jam 6</th><th>Jam 7</th><th>Jam 8</th><th>Jam 9</th>
+            </tr>
+          </thead>
+          <tbody id="matrixBody">
+            <!-- Diisi otomatis pakai Javascript -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
   </div>
 
-  <!-- ==================== MODAL PENGUMUMAN SELAMAT DATANG (KETUA KELAS) ==================== -->
+  <!-- MODAL WELCOME -->
   <div id="modalWelcome" class="modal">
     <div class="modal-box" style="text-align:center;">
       <div style="font-size:40px; margin-bottom:12px;">📢</div>
@@ -142,7 +181,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL ISI JURNAL ==================== -->
+  <!-- MODAL ISI JURNAL -->
   <div id="modalJurnal" class="modal">
     <div class="modal-box">
       <h3 id="mTitle" style="font-size:16px; font-weight:700; margin-bottom:4px;">Jam ke-1: Matematika</h3>
@@ -167,7 +206,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL GANTI PASSWORD ==================== -->
+  <!-- MODAL GANTI PASSWORD -->
   <div id="modalPassword" class="modal">
     <div class="modal-box">
       <h3 style="font-size:16px; font-weight:700; margin-bottom:12px;">🔑 Ganti Password Akun</h3>
@@ -191,11 +230,11 @@
 
 <script>
 // =======================================================
-// SETTING URL WEB APP GOOGLE APPS SCRIPT LU DI SINI
+// LINK WEB APP GAS LU YANG BARU
 // =======================================================
 const API_URL = 'https://script.google.com/macros/s/AKfycbz2PPlOenLDm7LM-vNfyvgXtQFWTYxDfD1juk8ONJjRYp571wNxJ_LWhCyvQjUiDWk/exec'; 
 
-let currentUser = null; // { role: 'ketua'/'admin', username, kelas }
+let currentUser = null; 
 let calendar = null;
 let selectedEventData = null;
 
@@ -209,7 +248,6 @@ function callApi(action, data) {
   .catch(err => ({ success: false, message: 'Gagal terhubung ke Server.' }));
 }
 
-// LOGIN
 let selectedRole = 'ketua';
 function pilihRole(role) {
   selectedRole = role;
@@ -226,7 +264,7 @@ async function handleLogin() {
   if(!user || !pass) { showAlert('Harap isi semua kolom!', 'error'); return; }
 
   if(selectedRole === 'admin') {
-    if(pass === 'admin177') { // Password master admin
+    if(pass === 'admin177') {
       currentUser = { role: 'admin', username: 'admin' };
       masukDashboard();
     } else {
@@ -239,7 +277,6 @@ async function handleLogin() {
   if(res.success) {
     currentUser = { role: 'ketua', username: user, kelas: res.kelas };
     masukDashboard();
-    // Munculkan popup khusus ketua kelas
     document.getElementById('modalWelcome').classList.add('show');
   } else {
     showAlert(res.message, 'error');
@@ -255,31 +292,30 @@ function showAlert(msg, type) {
 
 function masukDashboard() {
   document.getElementById('loginView').classList.add('hidden');
-  document.getElementById('dashboardView').classList.remove('hidden');
   document.getElementById('statsBar').classList.remove('hidden');
   
   if(currentUser.role === 'admin') {
-    document.getElementById('dashTitle').textContent = '🛡️ Dashboard Admin - Monitoring Keseluruhan';
-    document.getElementById('dashSub').textContent = 'Pantau rekap kehadiran seluruh kelas di SMPN 177 Jakarta.';
+    document.getElementById('dashAdminView').classList.remove('hidden');
+    document.getElementById('adminFilterTanggal').value = new Date().toISOString().split('T')[0];
+    loadAdminData();
   } else {
-    document.getElementById('dashTitle').textContent = `📅 Jadwal Kelas ${currentUser.kelas}`;
-    document.getElementById('dashSub').textContent = 'Klik pada jam pelajaran untuk mencatat kehadiran guru.';
+    document.getElementById('dashKetuaView').classList.remove('hidden');
+    document.getElementById('dashTitleKetua').textContent = `📅 Jadwal Kelas ${currentUser.kelas}`;
+    initKalender();
   }
-  
-  initKalender();
 }
 
 function logout() { location.reload(); }
 function tutupWelcome() { document.getElementById('modalWelcome').classList.remove('show'); }
 
-// KALENDER
+// ==================== KALENDER KETUA KELAS ====================
 function initKalender() {
   const calendarEl = document.getElementById('calendar');
   calendar = new FullCalendar.Calendar(calendarEl, {
     locale: 'id',
     initialView: 'timeGridWeek',
     headerToolbar: { left: 'prev,next today', center: 'title', right: 'timeGridWeek,timeGridDay' },
-    hiddenDays: [0, 6], // Libur Sabtu Minggu
+    hiddenDays: [0, 6], 
     slotMinTime: '06:30:00',
     slotMaxTime: '15:00:00',
     allDaySlot: false,
@@ -288,11 +324,7 @@ function initKalender() {
       loadJadwalEvents(successCallback);
     },
     eventClick: function(info) {
-      if(currentUser.role === 'ketua') {
-        bukaModalJurnal(info.event);
-      } else {
-        alert(`Laporan Jam ke-${info.event.extendedProps.jam} (${info.event.title})`);
-      }
+      bukaModalJurnal(info.event);
     }
   });
   calendar.render();
@@ -302,7 +334,6 @@ async function loadJadwalEvents(callback) {
   const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
   let events = [];
   
-  // Tanggal patokan senin minggu ini secara akurat
   let curr = new Date();
   let first = curr.getDate() - curr.getDay() + 1;
   let seninIni = new Date(curr.setDate(first));
@@ -312,9 +343,7 @@ async function loadJadwalEvents(callback) {
     tgl.setDate(seninIni.getDate() + i);
     let tglStr = tgl.toISOString().split('T')[0];
     
-    // Tarik data dari API Master_Jadwal sesuai kelas ketua
-    const targetKelas = currentUser.role === 'ketua' ? currentUser.kelas : 'VII A'; // admin default
-    const res = await callApi('getJadwalKelas', { kelas: targetKelas, tanggal: tglStr });
+    const res = await callApi('getJadwalKelas', { kelas: currentUser.kelas, tanggal: tglStr });
     
     if(res.success && res.data.length > 0) {
       res.data.forEach(j => {
@@ -330,7 +359,7 @@ async function loadJadwalEvents(callback) {
 
         events.push({
           id: `${tglStr}-${j.jam}`,
-          title: `${j.mapel} (${j.guru})`,
+          title: `${j.mapel} — ${j.guru}`,
           start: `${tglStr}T${start}:00`,
           end: `${tglStr}T${end}:00`,
           backgroundColor: '#2563eb',
@@ -341,6 +370,56 @@ async function loadJadwalEvents(callback) {
     }
   }
   callback(events);
+}
+
+// ==================== DASHBOARD ADMIN (REKAP MATRIKS) ====================
+async function loadAdminData() {
+  const tglPilih = document.getElementById('adminFilterTanggal').value;
+  const res = await callApi('getLaporan', { filterTanggal: tglPilih });
+  
+  let rekapMap = {};
+  if(res.success && res.data) {
+    res.data.forEach(row => {
+      // row.kelas & row.jamKe
+      rekapMap[row.kelas + '-' + row.jamKe] = row.kehadiran;
+    });
+  }
+
+  // Generate daftar kelas dari 7A sampai 9I
+  let kelasList = [];
+  ['7', '8', '9'].forEach(tingkat => {
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(huruf => {
+      kelasList.push(tingkat + ' ' + huruf); // contoh: "7 A" atau sesuaikan format Master_Jadwal ("VII A"?)
+    });
+  });
+
+  // Di Master_Jadwal format kelas lu "VII A" atau "7A"? Sesuaiin format di bawah:
+  // Mari kita buat dinamis atau pakai format umum: "VII A", "VII B", dst.
+  const رومawi = ['VII', 'VIII', 'IX'];
+  let listKelasFinal = [];
+  romawi.forEach(rom => {
+    ['A','B','C','D','E','F','G','H','I'].forEach(h => {
+      listKelasFinal.push(`${rom} ${h}`);
+    });
+  });
+
+  let tbodyHtml = '';
+  listKelasFinal.forEach(kls => {
+    tbodyHtml += `<tr><td style="font-weight:700; background:#f8fafc;">${kls}</td>`;
+    for(let jam=1; jam<=9; jam++) {
+      let status = rekapMap[kls + '-' + jam] || '';
+      let badgeClass = 'cell-kosong';
+      let text = '—';
+      if(status === 'Hadir') { badgeClass = 'cell-hadir'; text = 'Hadir'; }
+      else if(status === 'Tidak Hadir') { badgeClass = 'cell-tidak'; text = 'Tidak'; }
+      else if(status === 'Izin') { badgeClass = 'cell-izin'; text = 'Izin'; }
+
+      tbodyHtml += `<td class="${badgeClass}">${text}</td>`;
+    }
+    tbodyHtml += `</tr>`;
+  });
+
+  document.getElementById('matrixBody').innerHTML = tbodyHtml;
 }
 
 // MODAL JURNAL
@@ -391,7 +470,6 @@ async function simpanJurnal() {
   }
 }
 
-// GANTI PASSWORD
 function bukaModalPassword() { document.getElementById('modalPassword').classList.add('show'); }
 function tutupModalPassword() { document.getElementById('modalPassword').classList.remove('show'); }
 
